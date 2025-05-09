@@ -2,122 +2,173 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Crucial pour le design mobile et la gestion de l'encoche iPhone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Zenia IA Chat</title>
   <style>
     :root {
-      --primary-color: #007bff; /* Bleu Zenia */
-      --primary-hover-color: #0056b3;
-      --background-color: #f0f2f5;
-      --chat-bubble-ai-bg: #e9e9eb;
-      --chat-bubble-user-bg: #007bff;
+      --primary-color: #007AFF; /* Bleu iOS standard */
+      --primary-hover-color: #005bb5;
+      --app-bg: #f9f9f9; /* Fond général de l'app, légèrement off-white */
+      --header-bg: rgba(249, 249, 249, 0.95); /* Fond de header avec légère transparence pour effet blur */
+      --chat-bubble-ai-bg: #E5E5EA; /* Gris clair iOS pour les messages reçus */
+      --chat-bubble-ai-text: #000000;
+      --chat-bubble-user-bg: var(--primary-color);
       --chat-bubble-user-text: #ffffff;
-      --text-color: #1c1e21;
-      --secondary-text-color: #606770;
-      --border-color: #ced0d4;
-      --header-height: 110px; /* Ajusté pour deux lignes */
-      --input-area-height: 70px;
+      --text-color: #000000;
+      --secondary-text-color: #8A8A8E; /* Gris secondaire iOS */
+      --border-color: #D1D1D6;     /* Bordure fine iOS */
+      --input-bg: #FFFFFF;
+
+      /* Safe Area Insets - valeurs par défaut si non supportées */
+      --safe-area-inset-top: env(safe-area-inset-top, 0px);
+      --safe-area-inset-right: env(safe-area-inset-right, 0px);
+      --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-area-inset-left: env(safe-area-inset-left, 0px);
     }
 
     html, body {
       height: 100%;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--background-color);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--app-bg);
       color: var(--text-color);
-      overflow: hidden; /* Empêche le scroll du body */
+      overflow: hidden;
     }
 
     .app-container {
       display: flex;
       flex-direction: column;
-      height: 100vh; /* Pleine hauteur de la vue */
-      max-width: 600px; /* Limite la largeur sur desktop pour un look mobile */
+      height: 100vh; /* s'assure que l'app prend toute la hauteur */
+      max-width: 600px;
       margin: 0 auto;
-      background-color: white;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      background-color: var(--app-bg);
+      /* Utilisation des safe areas pour le padding global de l'app */
+      padding-top: var(--safe-area-inset-top);
+      /* padding-bottom: var(--safe-area-inset-bottom); */ /* La zone d'input gérera son propre padding-bottom */
+      box-shadow: 0 0 30px rgba(0,0,0,0.08);
     }
 
     .chat-header {
-      background-color: #ffffff;
-      padding: 15px;
-      border-bottom: 1px solid var(--border-color);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      height: var(--header-height);
-      box-sizing: border-box;
+      background-color: var(--header-bg);
+      -webkit-backdrop-filter: blur(20px); /* Effet de flou pour Safari */
+      backdrop-filter: blur(20px);       /* Effet de flou standard */
+      padding: 10px 15px;
+      padding-left: calc(15px + var(--safe-area-inset-left));
+      padding-right: calc(15px + var(--safe-area-inset-right));
+      border-bottom: 0.5px solid var(--border-color); /* Bordure très fine style iOS */
       flex-shrink: 0;
+      z-index: 10;
     }
 
     .chat-header h1 {
-      font-size: 1.4rem;
-      margin: 0 0 10px 0;
-      color: var(--primary-color);
+      font-size: 17px; /* Taille de titre de barre de nav iOS */
+      font-weight: 600; /* Semibold */
+      margin: 0 0 8px 0;
+      color: var(--text-color);
       text-align: center;
     }
 
     .chat-header select {
       width: 100%;
-      padding: 10px;
-      font-size: 0.9rem;
-      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 0.5px solid var(--border-color);
       border-radius: 8px;
-      background-color: var(--background-color);
-      appearance: none; /* Remove default arrow */
-      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5z%22%20fill%3D%22%23606770%22%2F%3E%3C%2Fsvg%3E');
+      background-color: rgba(230, 230, 234, 0.5); /* Fond de contrôle iOS-like */
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5H5z%22%20fill%3D%22%238A8A8E%22%2F%3E%3C%2Fsvg%3E');
       background-repeat: no-repeat;
       background-position: right 10px center;
       background-size: 16px;
+      color: var(--text-color);
+    }
+    .chat-header select:focus {
+        outline: none;
+        border-color: var(--primary-color);
     }
 
     #output {
-      flex-grow: 1; /* Prend l'espace restant */
+      flex-grow: 1;
       overflow-y: auto;
       padding: 15px;
+      padding-left: calc(15px + var(--safe-area-inset-left));
+      padding-right: calc(15px + var(--safe-area-inset-right));
       display: flex;
       flex-direction: column;
-      gap: 10px; /* Espace entre les bulles */
+      gap: 12px; /* Espace entre les bulles */
+      scrollbar-width: thin; /* Pour Firefox */
+      scrollbar-color: var(--border-color) transparent; /* Pour Firefox */
+    }
+    /* Style de scrollbar pour WebKit (Safari, Chrome) */
+    #output::-webkit-scrollbar {
+      width: 6px;
+    }
+    #output::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #output::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 10px;
     }
 
+
     .message {
-      padding: 10px 15px;
-      border-radius: 18px;
-      max-width: 75%;
-      line-height: 1.4;
+      padding: 9px 14px;
+      border-radius: 20px; /* Bulles iMessage */
+      max-width: 78%;
+      line-height: 1.45;
       word-wrap: break-word;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      /* box-shadow: 0 1px 1px rgba(0,0,0,0.03); */ /* Ombre très subtile ou pas d'ombre */
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .user-message {
       background-color: var(--chat-bubble-user-bg);
       color: var(--chat-bubble-user-text);
       align-self: flex-end;
-      border-bottom-right-radius: 4px; /* Style "queue" de bulle */
+      border-bottom-right-radius: 5px;
     }
 
     .ai-message {
       background-color: var(--chat-bubble-ai-bg);
-      color: var(--text-color);
+      color: var(--chat-bubble-ai-text);
       align-self: flex-start;
-      border-bottom-left-radius: 4px; /* Style "queue" de bulle */
+      border-bottom-left-radius: 5px;
     }
 
-    .ai-message strong {
+    .ai-message strong { /* Nom de l'IA */
       display: block;
-      font-size: 0.8rem;
-      margin-bottom: 4px;
-      color: var(--primary-color); /* Nom de l'IA en bleu */
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 3px;
+      color: var(--secondary-text-color); /* Nom de l'IA plus discret */
+    }
+
+    .typing-indicator-container {
+      align-self: flex-start;
+      padding: 0 !important; /* Pour que l'indicateur s'aligne bien */
+      background-color: transparent !important;
+      box-shadow: none !important;
     }
 
     .typing-indicator {
-        display: flex;
-        align-items: center;
-        padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      background-color: var(--chat-bubble-ai-bg);
+      border-radius: 20px;
+      border-bottom-left-radius: 5px;
     }
     .typing-indicator span {
         height: 8px;
         width: 8px;
         margin: 0 2px;
-        background-color: #aaa;
+        background-color: #BDBDC2; /* Couleur des points iOS */
         border-radius: 50%;
         display: inline-block;
         animation: bounce 1.4s infinite ease-in-out both;
@@ -125,74 +176,88 @@
     .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
     .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
     @keyframes bounce {
-        0%, 80%, 100% { transform: scale(0); }
-        40% { transform: scale(1.0); }
+        0%, 80%, 100% { transform: scale(0.5); opacity: 0.5; } /* Ajustement pour iOS */
+        40% { transform: scale(1.0); opacity: 1; }
     }
 
 
     .input-area {
       display: flex;
-      align-items: center;
-      padding: 10px 15px;
-      border-top: 1px solid var(--border-color);
-      background-color: #ffffff;
-      height: var(--input-area-height);
-      box-sizing: border-box;
+      align-items: flex-end; /* Aligne les éléments en bas si le textarea grandit */
+      padding: 8px 10px;
+      padding-bottom: calc(8px + var(--safe-area-inset-bottom)); /* ESSENTIEL pour iPhone */
+      padding-left: calc(10px + var(--safe-area-inset-left));
+      padding-right: calc(10px + var(--safe-area-inset-right));
+      border-top: 0.5px solid var(--border-color);
+      background-color: var(--input-bg);
       flex-shrink: 0;
     }
 
     #input {
       flex-grow: 1;
-      padding: 12px;
-      font-size: 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: 20px; /* Plus arrondi */
-      resize: none; /* Empêche le redimensionnement manuel */
-      margin-right: 10px;
-      min-height: 24px; /* Hauteur initiale pour une ligne */
-      max-height: 100px; /* Limite l'expansion */
-      overflow-y: auto; /* Permet le scroll si > max-height */
+      padding: 10px 15px;
+      font-size: 16px; /* Taille de texte standard iOS */
+      border: none; /* Enlevé pour un look plus intégré */
+      border-radius: 20px;
+      background-color: var(--chat-bubble-ai-bg); /* Même fond que les bulles AI pour le champ */
+      resize: none;
+      margin-right: 8px;
+      min-height: 22px; /* Ajusté pour la font-size */
+      max-height: 120px;
+      overflow-y: auto;
       line-height: 1.4;
+      outline: none;
+      color: var(--text-color);
     }
+    #input::placeholder {
+        color: var(--secondary-text-color);
+    }
+
 
     #send {
       background-color: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 50%; /* Bouton rond */
-      width: 48px;
-      height: 48px;
+      border-radius: 50%;
+      width: 40px; /* Légèrement plus petit pour iOS */
+      height: 40px;
       font-size: 1.5rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.2s ease, transform 0.1s ease;
       flex-shrink: 0;
+      margin-bottom: 2px; /* Petit ajustement vertical */
     }
     #send:hover {
       background-color: var(--primary-hover-color);
     }
-    #send:disabled {
-      background-color: #bcc0c4;
-      cursor: not-allowed;
+    #send:active {
+        transform: scale(0.9); /* Effet de pression */
     }
-    #send svg { /* Style pour l'icône SVG */
-        width: 24px;
-        height: 24px;
+    #send:disabled {
+      background-color: #AEAEB2; /* Gris désactivé iOS */
+      cursor: not-allowed;
+      transform: scale(1);
+    }
+    #send svg {
+        width: 20px; /* Ajusté pour le bouton plus petit */
+        height: 20px;
         fill: white;
+        margin-left: 2px; /* Centrage de l'icône "avion" */
     }
   </style>
 </head>
 <body>
   <div class="app-container">
     <header class="chat-header">
-      <h1>Zenia IA Chat</h1>
+      <h1>Chat Zenia</h1>
       <select id="collaborator">
         <option value="max">Max – Expert SEO</option>
         <option value="clara">Clara – Stratège Newsletter</option>
-        <option value="lucas">Lucas – Pro Onboarding & Lead</option>
-        <option value="hugo">Hugo – Analyste de Données</option>
+        <option value="lucas">Lucas – Pro Onboarding</option>
+        <option value="hugo">Hugo – Analyste Données</option>
       </select>
     </header>
 
@@ -201,9 +266,10 @@
     </div>
 
     <div class="input-area">
-      <textarea id="input" placeholder="Votre message..." rows="1"></textarea>
+      <textarea id="input" placeholder="Message..." rows="1"></textarea>
       <button id="send" title="Envoyer">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+        <!-- Icône "Envoyer" (avion en papier) style iOS -->
+        <svg viewBox="0 0 24 24"><path d="M3.4 20.4l17.4-8.4c.8-.4.8-1.6 0-2L3.4 1.6c-.7-.3-1.5.1-1.5.9L2 9.5l12 1.5L2 12.5l-.1 7c0 .8.7 1.2 1.5.9z"></path></svg>
       </button>
     </div>
   </div>
@@ -211,7 +277,7 @@
   <script type="module">
     import { HfInference } from 'https://cdn.skypack.dev/@huggingface/inference';
 
-    const HF_TOKEN = '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'; // Gardez votre token ici
+    const HF_TOKEN = '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';
     const client = new HfInference(HF_TOKEN);
 
     const sendBtn = document.getElementById('send');
@@ -222,31 +288,43 @@
     const collaboratorPrompts = {
       max: {
         name: "Max (SEO)",
-        system_prompt: `Vous êtes Max, un collaborateur IA SEO expert pour la plateforme Zenia. Votre rôle est d'analyser le site du client, de fournir des audits SEO complets (structure, vitesse, balises, maillage), d'analyser le contenu et le trafic. Vous extrayez les mots-clés, faites des recommandations hebdomadaires (nouveaux contenus, optimisations, liens) et pouvez générer un contenu SEO optimisé par semaine. Vos rapports SEO incluent évolution du trafic, positions, erreurs techniques et recommandations actionnables. Répondez de manière professionnelle, axée sur les résultats SEO, et claire. Utilisez des listes à puces pour les recommandations si pertinent.`
+        system_prompt: `Vous êtes Max, un collaborateur IA SEO expert pour la plateforme Zenia. Votre rôle est d'analyser le site du client, de fournir des audits SEO complets (structure, vitesse, balises, maillage), d'analyser le contenu et le trafic. Vous extrayez les mots-clés, faites des recommandations hebdomadaires (nouveaux contenus, optimisations, liens) et pouvez générer un contenu SEO optimisé par semaine. Vos rapports SEO incluent évolution du trafic, positions, erreurs techniques et recommandations actionnables. Répondez de manière professionnelle, axée sur les résultats SEO, et claire. Utilisez des listes à puces pour les recommandations si pertinent. Adoptez un ton concis et direct.`
       },
       clara: {
         name: "Clara (Newsletter)",
-        system_prompt: `Vous êtes Clara, une collaboratrice IA spécialisée dans la création de newsletters pour la plateforme Zenia. Vous aidez à configurer le ton de voix, la fréquence et la cible. Vous rédigez des newsletters hebdomadaires basées sur l'actualité de l'entreprise, le comportement des visiteurs, et les contenus SEO de Max. Vous proposez des brouillons pour validation, automatisez l'ajout d'abonnés et adaptez le contenu. Vos rapports incluent statistiques (ouvertures, clics, désinscriptions) et suggestions d'amélioration. Soyez créative, engageante et professionnelle. N'hésitez pas à utiliser des emojis pertinents pour dynamiser vos propositions.`
+        system_prompt: `Vous êtes Clara, une collaboratrice IA spécialisée dans la création de newsletters pour la plateforme Zenia. Vous aidez à configurer le ton de voix, la fréquence et la cible. Vous rédigez des newsletters hebdomadaires basées sur l'actualité de l'entreprise, le comportement des visiteurs, et les contenus SEO de Max. Vous proposez des brouillons pour validation, automatisez l'ajout d'abonnés et adaptez le contenu. Vos rapports incluent statistiques (ouvertures, clics, désinscriptions) et suggestions d'amélioration. Soyez créative, engageante et professionnelle. N'hésitez pas à utiliser des emojis pertinents (style iOS) pour dynamiser vos propositions.`
       },
       lucas: {
         name: "Lucas (Onboarding)",
-        system_prompt: `Vous êtes Lucas, un collaborateur IA chargé de l'onboarding des visiteurs et de la qualification des leads pour la plateforme Zenia. Via un chatbot humanisé, vous accueillez les visiteurs, qualifiez leurs besoins, budget et contact, et les redirigez vers des actions clés (RDV, document, formulaire). Vous adaptez le script conversationnel, collectez les données, et enrichissez le scoring des leads. Vos rapports indiquent le nombre et la qualité des leads, avec des suggestions d'optimisation UX. Soyez accueillant, direct, efficace et professionnel. Posez des questions claires pour qualifier.`
+        system_prompt: `Vous êtes Lucas, un collaborateur IA chargé de l'onboarding des visiteurs et de la qualification des leads pour la plateforme Zenia. Via un chatbot humanisé, vous accueillez les visiteurs, qualifiez leurs besoins, budget et contact, et les redirigez vers des actions clés (RDV, document, formulaire). Vous adaptez le script conversationnel, collectez les données, et enrichissez le scoring des leads. Vos rapports indiquent le nombre et la qualité des leads, avec des suggestions d'optimisation UX. Soyez accueillant, direct, efficace et professionnel. Posez des questions claires et concises pour qualifier.`
       },
       hugo: {
         name: "Hugo (Analytics)",
-        system_prompt: `Vous êtes Hugo, un collaborateur IA expert en analytics pour la plateforme Zenia. Vous surveillez les KPIs du site (pages vues, durée, taux de rebond, tunnel de conversion), analysez le comportement des visiteurs et détectez les anomalies. En cas de performance anormale, vous alertez et proposez des recommandations UX (CTA, sections, pages). Vous croisez les données avec celles de Max (SEO) et Clara (Newsletter) pour des suggestions synergiques. Vos rapports clairs incluent KPIs visuels, graphiques si possible (en texte), alertes et recommandations concrètes. Soyez précis, analytique, factuel et orienté action.`
+        system_prompt: `Vous êtes Hugo, un collaborateur IA expert en analytics pour la plateforme Zenia. Vous surveillez les KPIs du site (pages vues, durée, taux de rebond, tunnel de conversion), analysez le comportement des visiteurs et détectez les anomalies. En cas de performance anormale, vous alertez et proposez des recommandations UX (CTA, sections, pages). Vous croisez les données avec celles de Max (SEO) et Clara (Newsletter) pour des suggestions synergiques. Vos rapports clairs incluent KPIs visuels, graphiques si possible (en texte), alertes et recommandations concrètes. Soyez précis, analytique, factuel et orienté action. Utilisez un langage clair et accessible.`
       }
     };
 
     function scrollToBottom() {
-      outputEl.scrollTop = outputEl.scrollHeight;
+      // setTimeout pour s'assurer que le DOM est mis à jour avant de scroller (utile pour les animations)
+      setTimeout(() => {
+         outputEl.scrollTop = outputEl.scrollHeight;
+      }, 50);
     }
 
     function addMessageToChat(text, senderName, isUser = false, isTypingIndicator = false) {
       const messageDiv = document.createElement('div');
       if (isTypingIndicator) {
-        messageDiv.classList.add('message', 'ai-message', 'typing-indicator-container'); // Ajout d'une classe conteneur
-        messageDiv.innerHTML = `<strong>${senderName} est en train d'écrire...</strong><div class="typing-indicator"><span></span><span></span><span></span></div>`;
+        messageDiv.classList.add('message', 'typing-indicator-container');
+        const indicatorContent = document.createElement('div');
+        indicatorContent.classList.add('typing-indicator');
+        indicatorContent.innerHTML = `<span></span><span></span><span></span>`;
+
+        const senderStrong = document.createElement('strong');
+        senderStrong.textContent = senderName + ' écrit...';
+        messageDiv.appendChild(senderStrong); // Le nom avant l'indicateur
+        messageDiv.appendChild(indicatorContent);
+
+
       } else {
         messageDiv.classList.add('message');
         if (isUser) {
@@ -255,10 +333,11 @@
         } else {
           messageDiv.classList.add('ai-message');
           const senderStrong = document.createElement('strong');
-          senderStrong.textContent = senderName + ':';
+          senderStrong.textContent = senderName; // Juste le nom, sans ":"
           messageDiv.appendChild(senderStrong);
           const contentSpan = document.createElement('span');
-          contentSpan.style.whiteSpace = 'pre-wrap'; // Pour conserver les retours à la ligne du LLM
+          contentSpan.style.whiteSpace = 'pre-wrap';
+          contentSpan.style.display = 'block'; // Pour que le contenu soit en dessous du nom
           contentSpan.textContent = text;
           messageDiv.appendChild(contentSpan);
         }
@@ -268,16 +347,17 @@
       return messageDiv;
     }
 
-    // Auto-ajustement de la hauteur du textarea
     inputEl.addEventListener('input', () => {
-      inputEl.style.height = 'auto'; // Réinitialise la hauteur
-      inputEl.style.height = (inputEl.scrollHeight) + 'px'; // Ajuste à la hauteur du contenu
-      // Limiter la hauteur maximale si nécessaire
-      if (inputEl.scrollHeight > 100) { // 100px est la max-height CSS
+      inputEl.style.height = 'auto';
+      let newHeight = inputEl.scrollHeight;
+      const maxHeight = 120; // Correspond à max-height CSS
+      if (newHeight > maxHeight) {
+          newHeight = maxHeight;
           inputEl.style.overflowY = 'auto';
       } else {
           inputEl.style.overflowY = 'hidden';
       }
+      inputEl.style.height = newHeight + 'px';
     });
 
 
@@ -290,12 +370,12 @@
 
       addMessageToChat(userPrompt, "Utilisateur", true);
       inputEl.value = '';
-      inputEl.style.height = 'auto'; // Réinitialise la hauteur après envoi
+      inputEl.style.height = 'auto';
+      inputEl.style.overflowY = 'hidden';
       sendBtn.disabled = true;
+      inputEl.blur(); // Optionnel: enlever le focus après envoi
 
-      // Ajoute un indicateur de frappe
       const typingMessage = addMessageToChat('', collaboratorInfo.name, false, true);
-
 
       try {
         const stream = client.chatCompletionStream({
@@ -304,23 +384,23 @@
             { role: 'system', content: collaboratorInfo.system_prompt },
             { role: 'user', content: userPrompt }
           ],
-          temperature: 0.6,
-          max_tokens: 1000,
+          temperature: 0.65, // Un peu plus de créativité/variété
+          max_tokens: 1200,
           top_p: 0.9,
         });
 
         let out = '';
-        // On va créer le message de l'IA une fois qu'on a le premier chunk
         let aiMessageDiv = null;
         let aiContentSpan = null;
 
         for await (const chunk of stream) {
           if (chunk.choices?.length > 0 && chunk.choices[0].delta?.content) {
-            // Si c'est le premier chunk, supprimer l'indicateur de frappe et créer le message
             if (!aiMessageDiv) {
-              outputEl.removeChild(typingMessage); // Supprime l'indicateur
-              aiMessageDiv = addMessageToChat('', collaboratorInfo.name, false); // Crée la bulle de message
-              aiContentSpan = aiMessageDiv.querySelector('span'); // Cible le span pour le contenu
+              if (outputEl.contains(typingMessage)) {
+                  outputEl.removeChild(typingMessage);
+              }
+              aiMessageDiv = addMessageToChat('', collaboratorInfo.name, false);
+              aiContentSpan = aiMessageDiv.querySelector('span');
             }
             const delta = chunk.choices[0].delta.content;
             out += delta;
@@ -328,11 +408,13 @@
             scrollToBottom();
           }
         }
-        if (!out && aiMessageDiv) { // Si aucun contenu n'a été streamé mais que la bulle existe
-            aiContentSpan.textContent = "[L'IA n'a pas fourni de réponse ou une erreur s'est produite pendant le stream]";
-        } else if (!out && !aiMessageDiv) { // Aucun stream et l'indicateur de frappe est toujours là
-            outputEl.removeChild(typingMessage);
-            addMessageToChat("[L'IA n'a pas répondu]", collaboratorInfo.name, false);
+        if (!out && aiMessageDiv && aiContentSpan) {
+            aiContentSpan.textContent = "[Désolé, je n'ai pas pu générer de réponse.]";
+        } else if (!out && !aiMessageDiv) {
+            if (outputEl.contains(typingMessage)) {
+                outputEl.removeChild(typingMessage);
+            }
+            addMessageToChat("[L'IA n'a pas répondu ou une erreur de stream est survenue.]", collaboratorInfo.name, false);
         }
 
       } catch (error) {
@@ -340,7 +422,7 @@
         if (typingMessage && outputEl.contains(typingMessage)) {
           outputEl.removeChild(typingMessage);
         }
-        addMessageToChat('Erreur lors de la requête : ' + error.message, collaboratorInfo.name);
+        addMessageToChat('Oups! Une erreur est survenue: ' + error.message, collaboratorInfo.name);
       } finally {
         sendBtn.disabled = false;
       }
@@ -349,13 +431,13 @@
     sendBtn.addEventListener('click', handleSend);
     inputEl.addEventListener('keypress', (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault(); // Empêche le saut de ligne dans le textarea
+            event.preventDefault();
             handleSend();
         }
     });
 
-    // Message d'accueil initial
-    addMessageToChat("Bonjour ! Sélectionnez un collaborateur et posez votre question.", "Système Zenia");
+    // Message d'accueil initial plus engageant
+    addMessageToChat("Bienvenue sur Zenia IA Chat ! 👋 Sélectionnez un collaborateur ci-dessus et commençons.", "Système Zenia");
 
   </script>
 </body>
